@@ -29,7 +29,7 @@ async def start_command(msg: types.Message):
 @dp.message_handler(commands=['help'])
 async def help_command(msg: types.Message):
     await msg.reply("Список команд:\n"
-                    "Запуск бота/приветственное сообщение /start"
+                    "Запуск бота/приветственное сообщение /start \n"
                     "Поиск по названию /name \'название рецепта\'\n"
                     "Случайный рецепт /rand_food \n"
                     "Список команд /help")
