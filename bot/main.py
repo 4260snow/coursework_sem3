@@ -68,7 +68,7 @@ async def text_command(msg: types.Message):
                         f"_{answer['description']}_\n\n"
                         f"{answer['recipe']}", parse_mode="Markdown")
     else:
-        await msg.reply("Я вас не понимаю")
+        await msg.reply("Я Вас не понимаю")
 
 
 if __name__ == '__main__':
