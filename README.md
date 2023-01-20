@@ -63,6 +63,7 @@
 
 ## Описание client-server и хореографии
 * Создание новой записи
+
 ![Рис. 5 - Adm-serv](https://github.com/4260snow/coursework_sem3/blob/main/images/admserv.svg)
 
 * Запрос существующего рецепта по названию (/name arg)
