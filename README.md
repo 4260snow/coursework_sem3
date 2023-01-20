@@ -70,3 +70,123 @@
 
 * Запрос случайного рецепта (/rand_food)
 ![Рис. 6 - get2](https://github.com/4260snow/coursework_sem3/blob/main/images/get2.svg)
+
+### Структура базы данных MySQL
+```sh
+{
+    "id": 3,
+    "name": "Пангалактический грызлодёр",
+    "description": "Фантастический коктейль ...",
+    "recipe": "«Путеводитель для путешествующих автостопом по Галактике» даёт следующий рецепт ...",
+}
+```
+
+## Значимые фрагменты кода
+* Часть вывода списка рецептов в панели администратора
+
+```sh
+<div class="album py-5 bg-light">
+	<div class="container">
+		<div class="row row-cols-1 g-3">
+		<?php
+			$con = mysqli_connect(*,*,*,*); # hostname, username, password, table_name
+			$sql = "SELECT * FROM list_of_recipes ORDER BY id DESC";
+			$notes = mysqli_query($con, $sql);
+			$notes_amnt = mysqli_num_rows($notes);
+			$note_list = mysqli_fetch_all($notes, MYSQLI_ASSOC); // Список рецептов
+			mysqli_close($con);
+			for ($i = 0; $i < $notes_amnt; $i++){
+				include "note.php";
+			}
+		?>		
+		</div>
+	</div>
+</div>
+```
+
+* 'note.php'
+
+```sh
+<div class="col" id=<?php echo $note_list[$i]["id"] ?>>
+	<div class="card">
+		<svg class="bd-placeholder-img card-img-top" width="100%" height="125"><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em"><?php echo $note_list[$i]["name"] ?></text></svg>
+		<div class="card-body">
+			<p class="card-text"><?php echo $note_list[$i]["description"] ?></p>
+			<p class="card-text">
+				<?php
+					$new_rec = str_replace("\n", "<br>", $note_list[$i]["recipe"]);
+					echo $new_rec;
+				?>
+			</p>
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="btn-group">
+					<button type="button" class="btn btn-sm btn-outline-secondary">Удалить</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>	
+```
+
+
+* Запись в бд
+
+```sh
+	$table = "list_of_recipes";
+	$name = $_POST["name"];
+	$desc = $_POST["description"];
+	$rec = $_POST["recipe"];
+
+	$con = mysqli_connect("localhost", "f0767737_recipes", "12345678", "f0767737_recipes");
+	$sql = "INSERT INTO `$table` (`name`, `description`, `recipe`) VALUES ('$name', '$desc', '$rec')";
+	print_r($sql);
+	
+	mysqli_query($con, $sql);
+```
+
+* Запрос данных из БД для телеграм-бота
+```sh
+<?php
+    header('Content-Type: application/json; charset=utf-8');
+    
+    $con = mysqli_connect("localhost", "f0767737_recipes", "12345678", "f0767737_recipes");
+    $name = $_GET['name'];
+    
+    if ($name != NULL) {
+        $sql = "SELECT * FROM `list_of_recipes` WHERE `name`=\"$name\"";
+        $res = mysqli_query($con, $sql);
+        $res = mysqli_fetch_assoc($res);
+        
+        if (gettype($res["num_rows"])){
+            $data = ['name' => $res["name"], 'description' => $res["description"], 'recipe' => $res["recipe"]];
+        } else {
+            $data = ['name' => 0];
+        }
+        print_r(json_encode($data));
+    }else{
+        $sql = "SELECT * FROM `list_of_recipes` ORDER BY RAND() LIMIT 1";
+        $res = mysqli_query($con, $sql);
+        $res = mysqli_fetch_assoc($res);
+        $data = ['name' => $res["name"], 'description' => $res["description"], 'recipe' => $res["recipe"]];
+        print_r(json_encode($data));
+    }
+    mysqli_close($con);
+?>
+```
+
+* Запрос бота
+```python
+def get_recipes(name=None):
+    params = {"name": name}
+    res = requests.get('http://f0767737.xsph.ru/bot/get_data.php', params)
+    return res.json()
+```
+
+* Дополнительная клавиатура
+```python
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+
+btn_search = KeyboardButton('Поиск')
+btn_rand_recepie = KeyboardButton('Случайный')
+markup_menu = ReplyKeyboardMarkup(resize_keyboard=True).row(btn_search, btn_rand_recepie)
+```
