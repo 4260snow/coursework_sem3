@@ -9,8 +9,9 @@
     
     <title>Recipes</title>
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/album/">
-    <link href="css/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/assets/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/main.css">
+	<script type="text/javascript" src="main.js"></script>	
 
     
   </head>
