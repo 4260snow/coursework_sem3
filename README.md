@@ -47,6 +47,8 @@
 
 * Сценарий добавления нового рецепта. Поля названия и самого рецепта являются обязательными, пока они не будут заполены невозможно отправить запись в базу данных (название ограничено 250, а текст рецепта 2400 символами). Если администратор нажмёт на кнопку "записать" над незаполнеными полями "всплывает" надпись напоминающая об обязательном заполнении. Также есть поле краткого описания (ограниченно 250 симв).
 
+* Такжн администратор может удалять записи и видеть сколько раз искали рецепт
+
 ### Сценарии пользователей
 * После запуска бота (команда /start) пользователь получает сообщение с приветствием и возможностями бота (доступными командами/функциями): Поиск рецепта по названию (команда /name 'название') и запросо случайного рецепта (команда /rand_food или слово "случайный")
 
@@ -85,7 +87,7 @@
 ## Значимые фрагменты кода
 * Часть вывода списка рецептов в панели администратора
 
-```sh
+```php
 <div class="album py-5 bg-light">
 	<div class="container">
 		<div class="row row-cols-1 g-3">
@@ -107,7 +109,7 @@
 
 * 'note.php'
 
-```sh
+```php
 <div class="col" id=<?php echo $note_list[$i]["id"] ?>>
 	<div class="card">
 		<svg class="bd-placeholder-img card-img-top" width="100%" height="125"><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em"><?php echo $note_list[$i]["name"] ?></text></svg>
@@ -132,7 +134,7 @@
 
 * Запись в бд
 
-```sh
+```php
 	$table = "list_of_recipes";
 	$name = $_POST["name"];
 	$desc = $_POST["description"];
@@ -145,8 +147,8 @@
 	mysqli_query($con, $sql);
 ```
 
-* Запрос данных из БД для телеграм-бота
-```sh
+* Запрос данных из БД для телеграм-бота и подсчёт просмотров
+```php
 <?php
     header('Content-Type: application/json; charset=utf-8');
     
@@ -159,7 +161,13 @@
         $res = mysqli_fetch_assoc($res);
         
         if (gettype($res["num_rows"])){
-            $data = ['name' => $res["name"], 'description' => $res["description"], 'recipe' => $res["recipe"]];
+            $data = ['name' => $res["name"], 'description' => $res["description"], 'recipe' => $res["recipe"], 'view' => $res["view"]];
+            if ($res["view"] == None){
+                $sql = "UPDATE `list_of_recipes` SET `view`=1 WHERE id=$res['id']";
+            }else{
+                $sql = "UPDATE `list_of_recipes` SET `view`=$res["view"]+1 WHERE id=$res['id']";
+            }
+            mysqli_query($con, $sql);
         } else {
             $data = ['name' => 0];
         }
