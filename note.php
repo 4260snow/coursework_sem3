@@ -11,7 +11,7 @@
 			</p>
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="btn-group">
-					<button id="btnSend" type="button" value=<?php echo $note_list[$i]["id"]> class="btn btn-sm btn-outline-secondary">Удалить</button>
+					<button id="btnSend" type="button" value=<?php echo $note_list[$i]["id"]?> class="btn btn-sm btn-outline-secondary">Удалить</button>
 				</div>
 				<small class="text-muted">Количество просмотров : <?php echo $note_list[$i]["view"] ?></small>
 			</div>
