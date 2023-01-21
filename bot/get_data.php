@@ -10,7 +10,13 @@
         $res = mysqli_fetch_assoc($res);
         
         if (gettype($res["num_rows"])){
-            $data = ['name' => $res["name"], 'description' => $res["description"], 'recipe' => $res["recipe"]];
+            $data = ['name' => $res["name"], 'description' => $res["description"], 'recipe' => $res["recipe"], 'view' => $res["view"]];
+            if ($res["view"] == None){
+                $sql = "UPDATE `list_of_recipes` SET `view`=1 WHERE id=$res['id']";
+            }else{
+                $sql = "UPDATE `list_of_recipes` SET `view`=$res["view"]+1 WHERE id=$res['id']";
+            }
+            mysqli_query($con, $sql);
         } else {
             $data = ['name' => 0];
         }
