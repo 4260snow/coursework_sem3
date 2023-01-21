@@ -3,6 +3,7 @@
 	$password = "d82494f05d6917ba02f7aaa29689ccb444bb73f20380876cb05d1f37537b7892";
 	if (hash("sha256", $_GET["name"]) == $login){
 		if (hash("sha256", $_GET["password"]) == $password){
+			setcookie("token", random_bytes(15), time()+1800);
 			header("Location: ../main.php");
 			exit();
 		}
